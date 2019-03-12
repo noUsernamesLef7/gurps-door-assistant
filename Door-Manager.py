@@ -66,11 +66,25 @@ def force_door(door):
     else:
         print "The door remains fastly shut!\nNext attempt, subtract 1 from ST and lose 1 FP.\n"
 
+def pick_lock(door):
+    skill = input("Lockpicking skill? ")
+    margin = skill + door.lockpicking_modifier - roll_dice(3)
+    if margin > 0:
+        seconds = 60 - (margin * 5)
+        if seconds < 10:
+            seconds = 10
+        print "You spend " + str(seconds) + " seconds picking the lock."
+        door.picked = True
+    else:
+        print "You waste a full minute fumbling around with the lock."
+
 def do_action(door):
     print "Door HP: " + str(door.hp) + " Door DR: " + str(door.dr)
     print "1 - Crushing Attack\n2 - Cutting Attack"
     if door.secured:
         print "3 - Force Door Open"
+    if door.locked:
+        print "4 - Pick Lock"
     action = input("Enter the number of desired action: ")
     if action == 1:
         crush_attack(door)
@@ -78,16 +92,20 @@ def do_action(door):
         cut_attack(door)
     elif door.secured and action == 3:
         force_door(door)
+    elif door.locked and action == 4:
+        pick_lock(door)
     else:
         print action + " is an invalid input"
 
 # Test String: Average,Wooden,2,True,29,12,0,Average,Bolt,6,9,10,1,Disc Combination, -1
 # Main loop
 door = import_door()
-while not door.broken and not door.forced:
+while not door.broken and not door.forced and not door.picked:
     do_action(door)
     door.update_state()
 if door.broken:
     print "The door breaks open!"
-else:
+elif door.forced:
     print "\nThe door is forced open!"
+else:
+    print "\nThe door swings open!"

@@ -21,8 +21,13 @@ class Door:
             if door_stats[13] != "n/a":
                 self.lock_type = door_stats[13]
                 self.lockpicking_modifier = int(door_stats[14])
+                self.locked = True
+            else:
+                self.locked = False
         else:
             self.secured = False
+            self.locked = False
+        self.picked = False
         self.forced = False
         self.broken = False
         self.update_state()
