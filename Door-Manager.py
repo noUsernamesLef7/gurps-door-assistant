@@ -15,61 +15,79 @@ def roll_dice(dice):
         sum = sum + random.randint(1,6)
     return sum
 
-def all_out_attack(dice, modifier):
+def quick_contest(target):
+    return target - roll_dice(3)
+    
+
+def all_out_attack(dice):
     if raw_input("Is this an all-out-attack? yes/no ") == "yes":
         if dice > 2:
-            return modifier + dice
+            return dice
         else:
-            return modifier + 2
-    return modifier
+            return 2
+    return 0
 
-def forced_entry(modifier):
+def forced_entry():
     forced = input("Is Forced Entry skill at DX+1 or DX+2 plus? 0/1/2  ")
-    if forced == 1:
-        return modifier + 1
-    elif forced == 2:
-        return modifier + 2
-    return modifier
+    if forced == 1 or forced == 2:
+        return forced
+    else:
+        return 0
 
 def get_damage():
-    dice = input("How many dice of damage? ")
-    modifier = input("What is the damage modifier? ")
-    return dice, modifier
+    return input("How many dice of damage? "), input("What is the damage modifier? ")
+
+def get_effective_strength():
+    return input("Enter ST: ") + input("Lifting ST bonus, if applicable: ") + input("Add any other relevant modifiers, tools, etc: ")
 
 def crush_attack(door):
     dice, modifier = get_damage()
-    modifier = all_out_attack(dice, modifier)
-    modifier = forced_entry(modifier)
+    modifier = modifier + all_out_attack(dice) + forced_entry()
     damage = roll_dice(dice) + modifier - door.dr
     door.do_damage(damage)
     print "You deal " + str(damage) + " crushing damage to the door!\n" 
 
 def cut_attack(door):
     dice, modifier = get_damage()
-    modifier = all_out_attack(dice, modifier)
-    modifier = forced_entry(modifier)
+    modifier = modifier + all_out_attack(dice) + forced_entry()
     # Cutting attacks multiply damage by 1.5
     damage = (roll_dice(dice) + modifier - door.dr) * 1.5
     damage = int(round(damage))
     door.do_damage(damage)
     print "You deal " + str(damage) + " cutting damage to the door!\n"
 
+def force_door(door):
+    # TODO If device is a wedge or bar, the door can break before the security feature. Code should reflect this.
+    attacker_margin = quick_contest(get_effective_strength() + forced_entry() - door.security_dr)
+    defender_margin = quick_contest(door.security_hp)
+    print "Margin: " + str(attacker_margin) + " Door Margin: " + str(defender_margin)
+    if attacker_margin > defender_margin:
+        door.secured = False
+    else:
+        print "The door remains fastly shut!\nNext attempt, subtract 1 from ST and lose 1 FP.\n"
+
 def do_action(door):
     print "Door HP: " + str(door.hp) + " Door DR: " + str(door.dr)
-    print "1 - Crushing Attack"
-    print "2 - Cutting Attack"
+    print "1 - Crushing Attack\n2 - Cutting Attack"
+    if door.secured:
+        print "3 - Force Door Open"
     action = input("Enter the number of desired action: ")
     if action == 1:
         crush_attack(door)
     elif action == 2:
         cut_attack(door)
+    elif door.secured and action == 3:
+        force_door(door)
     else:
         print action + " is an invalid input"
 
 # Test String: Average,Wooden,2,True,29,12,0,Average,Bolt,6,9,10,1,Disc Combination, -1
 # Main loop
 door = import_door()
-while not door.broken:
+while not door.broken and not door.forced:
     do_action(door)
     door.update_state()
-print "The door breaks open!"
+if door.broken:
+    print "The door breaks open!"
+else:
+    print "\nThe door is forced open!"

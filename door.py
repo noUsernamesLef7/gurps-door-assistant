@@ -10,14 +10,20 @@ class Door:
         self.hp = int(door_stats[4])
         self.ht = int(door_stats[5])
         self.tl = int(door_stats[6])
-        self.security_level = door_stats[7]
-        self.security_type = door_stats[8]
-        self.security_dr = int(door_stats[9])
-        self.security_hp = int(door_stats[10])
-        self.security_ht = int(door_stats[11])
-        self.security_tl = int(door_stats[12])
-        self.lock_type = door_stats[13]
-        self.lockpicking_modifier = int(door_stats[14])
+        if door_stats[8] != "n/a":
+            self.security_level = door_stats[7]
+            self.security_type = door_stats[8]
+            self.security_dr = int(door_stats[9])
+            self.security_hp = int(door_stats[10])
+            self.security_ht = int(door_stats[11])
+            self.security_tl = int(door_stats[12])
+            self.secured = True
+            if door_stats[13] != "n/a":
+                self.lock_type = door_stats[13]
+                self.lockpicking_modifier = int(door_stats[14])
+        else:
+            self.secured = False
+        self.forced = False
         self.broken = False
         self.update_state()
 
