@@ -21,6 +21,15 @@ def all_out_attack(dice, modifier):
             return modifier + dice
         else:
             return modifier + 2
+    return modifier
+
+def forced_entry(modifier):
+    forced = input("Is Forced Entry skill at DX+1 or DX+2 plus? 0/1/2  ")
+    if forced == 1:
+        return modifier + 1
+    elif forced == 2:
+        return modifier + 2
+    return modifier
 
 def get_damage():
     dice = input("How many dice of damage? ")
@@ -30,6 +39,7 @@ def get_damage():
 def crush_attack(door):
     dice, modifier = get_damage()
     modifier = all_out_attack(dice, modifier)
+    modifier = forced_entry(modifier)
     damage = roll_dice(dice) + modifier - door.dr
     door.do_damage(damage)
     print "You deal " + str(damage) + " crushing damage to the door!\n" 
@@ -37,6 +47,7 @@ def crush_attack(door):
 def cut_attack(door):
     dice, modifier = get_damage()
     modifier = all_out_attack(dice, modifier)
+    modifier = forced_entry(modifier)
     # Cutting attacks multiply damage by 1.5
     damage = (roll_dice(dice) + modifier - door.dr) * 1.5
     damage = int(round(damage))
