@@ -15,6 +15,13 @@ def roll_dice(dice):
         sum = sum + random.randint(1,6)
     return sum
 
+def all_out_attack(dice, modifier):
+    if raw_input("Is this an all-out-attack? yes/no ") == "yes":
+        if dice > 2:
+            return modifier + dice
+        else:
+            return modifier + 2
+
 def get_damage():
     dice = input("How many dice of damage? ")
     modifier = input("What is the damage modifier? ")
@@ -22,16 +29,16 @@ def get_damage():
 
 def crush_attack(door):
     dice, modifier = get_damage()
-    # Add +1 to damage. We assume the attack is an all-out attack
-    damage = roll_dice(dice) + modifier + 1 - door.dr
+    modifier = all_out_attack(dice, modifier)
+    damage = roll_dice(dice) + modifier - door.dr
     door.do_damage(damage)
     print "You deal " + str(damage) + " crushing damage to the door!\n" 
 
 def cut_attack(door):
     dice, modifier = get_damage()
-    # Add +1 to damage. We assume the attack is an all-out attack
+    modifier = all_out_attack(dice, modifier)
     # Cutting attacks multiply damage by 1.5
-    damage = (roll_dice(dice) + modifier + 1 - door.dr) * 1.5
+    damage = (roll_dice(dice) + modifier - door.dr) * 1.5
     damage = int(round(damage))
     door.do_damage(damage)
     print "You deal " + str(damage) + " cutting damage to the door!\n"
