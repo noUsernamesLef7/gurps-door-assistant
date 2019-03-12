@@ -148,6 +148,19 @@ for unused in range(0, n):
 			positive = ""
 		lock_string = "  Lock: " + lock_type + " with " + positive + str(lockpick_mod) + " Lockpicking modifier"
 	
+        # Export string
+        door_export_string = door_level + "," + door_type["name"] + "," + str(door_type[door_level]["DR"]) + "," + str(door_type["ablative"]) + "," + str(door_type[door_level]["HP"]) + "," + str(door_type["HT"]) + "," + str(door_type["TL"])
+        if security_type != None:
+            security_export_string = security_level + "," + security_type["name"] + "," + str(security_type[security_level]["DR"]) + "," + str(security_type[security_level]["HP"]) + "," + str(security_type["HT"]) + "," + str(security_type["TL"])
+            if lock_type != None:
+                lock_export_string = lock_type + "," + str(lockpick_mod)
+            else:
+                lock_export_string = "n/a,n/a"
+        else:
+            security_export_string = "n/a,n/a,n/a,n/a,n/a,n/a"
+            lock_export_string = "n/a,n/a"
+        export_string = door_export_string + "," + security_export_string + "," + lock_export_string
+
 	# Display the output
 	print ""
 	print door_string
@@ -155,3 +168,4 @@ for unused in range(0, n):
 		print security_string
 	if lock_type != None:
 		print lock_string
+        print "Export: " + export_string
