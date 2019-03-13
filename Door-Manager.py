@@ -3,11 +3,15 @@ import random
 
 # Gets the doorstring from the user and returns a new door object.
 # Door string format: construction_level,material,DR,Ablative?,HP,HT,TL,security_construction_level,security_type,security_DR,security_HP,security_HT,security_TL,lock_type,lockpicking_modifier
-def import_door():
-	doorstring = raw_input("Enter the string of comma separated stats: ")
-	door_stats = doorstring.split(',')
-        new_door = door.Door(door_stats)
-        return new_door
+def import_door():	
+    door_stats = []
+    while len(door_stats) != 15:
+        doorstring = raw_input("Enter the string of comma separated stats: ")
+        door_stats = doorstring.split(',')
+        if len(door_stats) != 15:
+            print "Invalid import string!"
+    new_door = door.Door(door_stats)
+    return new_door
 
 def roll_dice(dice):
     sum = 0
@@ -25,7 +29,13 @@ def quick_contest(target):
     return target - roll
 
 def all_out_attack(dice):
-    if raw_input("Is this an all-out-attack? yes/no ") == "yes":
+    all_out = ""
+    while True: 
+        all_out = raw_input("Is this an all-out-attack? ")
+        if all_out == "yes" or all_out == "no":
+            break
+        print "Response must be 'yes' or 'no'."
+    if all_out == "yes":
         if dice > 2:
             return dice
         else:
@@ -33,17 +43,57 @@ def all_out_attack(dice):
     return 0
 
 def forced_entry():
-    forced = input("Is Forced Entry skill at DX+1 or DX+2 plus? 0/1/2  ")
+    while True:
+        try:
+            forced = int(raw_input("Is Forced Entry skill at DX+1 or DX+2 plus? Enter 0, 1, or 2:  "))
+        except ValueError:
+            print "Input must be a number!"
+            continue
+        if forced in [0, 1, 2]:
+            break
+        print "You must enter an number between 0 and 2!"
     if forced == 1 or forced == 2:
         return forced
     else:
         return 0
 
 def get_damage():
-    return input("How many dice of damage? "), input("What is the damage modifier? ")
+    while True:
+        try:
+            dice = int(raw_input("How many dice of damage? "))
+        except ValueError:
+            print "Input must be a number!"
+            continue
+        if dice > 0:
+            break
+        print "The number must be at least 1!"
+    while True:
+        try:
+            modifier = int(raw_input("What is the damage modifier? "))
+        except ValueError:
+            print "Input must be a number!"
+        else:
+            break
+    return dice, modifier
 
 def get_effective_strength():
-    return input("Enter ST: ") + input("Lifting ST bonus, if applicable: ") + input("Add any other relevant modifiers, tools, etc: ")
+    while True:
+        try:
+            st = int(raw_input("Enter ST: "))
+        except ValueError:
+            print "Input must be a number!"
+            continue
+        if st >= 0:
+            break
+        print "ST cannot be negative!"
+    while True:
+        try:
+            modifiers = int(raw_input("Add relevant modifiers. Lifting ST, tools, etc: "))
+        except ValueError:
+            print "Input must be a number!"
+        else:
+            break
+    return st + modifiers
 
 def crush_attack(door):
     dice, modifier = get_damage()
@@ -102,23 +152,36 @@ def pick_lock(door):
         print "You waste a full minute fumbling around with the lock."
 
 def do_action(door):
-    print "\nDoor HP: " + str(door.hp) + " Door DR: " + str(door.dr)
-    print "1 - Crushing Attack\n2 - Cutting Attack"
-    if door.secured:
-        print "3 - Force Door Open"
-    if door.locked:
-        print "4 - Pick Lock"
-    action = input("Enter the number of desired action: ")
+    while True:
+        print "\nDoor HP: " + str(door.hp) + " Door DR: " + str(door.dr)
+        print "1 - Crushing Attack\n2 - Cutting Attack"
+        if door.secured:
+            print "3 - Force Door Open"
+        if door.locked:
+            print "4 - Pick Lock"
+        try:
+            action = int(raw_input("Enter the number of desired action: "))
+        except ValueError:
+            print "You must enter a number!"
+            continue
+        if action > 4:
+            print "Not a valid option!"
+        elif action == 3 and not door.secured:
+            print "Not a valid option!"
+            continue
+        elif action == 4 and not door.locked:
+            print "Not a valid option!"
+            continue
+        else:
+            break
     if action == 1:
         crush_attack(door)
     elif action == 2:
         cut_attack(door)
-    elif door.secured and action == 3:
+    elif action == 3:
         force_door(door)
-    elif door.locked and action == 4:
+    elif action == 4:
         pick_lock(door)
-    else:
-        print str(action) + " is an invalid input"
 
 # Test String: Average,Wooden,2,True,29,12,0,Average,Bolt,6,9,10,1,Disc Combination, -1
 # Main loop
