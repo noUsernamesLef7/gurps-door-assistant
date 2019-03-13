@@ -11,13 +11,18 @@ def import_door():
 
 def roll_dice(dice):
     sum = 0
+    critical = ""
     for unused in range(0, dice):
         sum = sum + random.randint(1,6)
-    return sum
+    if sum == 18:
+        critical = "failure"
+    elif sum == 3 or sum == 4:
+        critical = "success"
+    return sum, critical
 
 def quick_contest(target):
-    return target - roll_dice(3)
-    
+    roll, critical = roll_dice(3)
+    return target - roll
 
 def all_out_attack(dice):
     if raw_input("Is this an all-out-attack? yes/no ") == "yes":
@@ -43,34 +48,52 @@ def get_effective_strength():
 def crush_attack(door):
     dice, modifier = get_damage()
     modifier = modifier + all_out_attack(dice) + forced_entry()
+    roll, critical = roll_dice(dice)
     damage = roll_dice(dice) + modifier - door.dr
-    door.do_damage(damage)
-    print "You deal " + str(damage) + " crushing damage to the door!\n" 
+    if critical == "failure":
+        print "Critical failure!\nThe result is up to the GM's imagination."
+    if critical == "success":
+        print "Critical success!\nConsult the Critical Hit Table.\nBase damage is " + str(damage) + "."
+    else:
+        door.do_damage(damage)
+        print "You deal " + str(damage) + " crushing damage to the door!" 
 
 def cut_attack(door):
     dice, modifier = get_damage()
     modifier = modifier + all_out_attack(dice) + forced_entry()
+    roll, critical = roll_dice(dice)
     # Cutting attacks multiply damage by 1.5
-    damage = (roll_dice(dice) + modifier - door.dr) * 1.5
-    damage = int(round(damage))
-    door.do_damage(damage)
-    print "You deal " + str(damage) + " cutting damage to the door!\n"
+    damage = int(round((roll + modifier - door.dr) * 1.5))
+    if critical == "failure":
+        print "Critical failure!\nThe result is up to the GM's imagination."
+    elif critical == "success":
+        print "Critical success!\nConsult the Critical Hit Table.\nBase damage is " + str(damage) + "."
+    else:
+        door.do_damage(damage)
+        print "You deal " + str(damage) + " cutting damage to the door!"
 
 def force_door(door):
-    # TODO If device is a wedge or bar, the door can break before the security feature. Code should reflect this.
     attacker_margin = quick_contest(get_effective_strength() + forced_entry() - door.security_dr)
     defender_margin = quick_contest(door.security_hp)
     print "Margin: " + str(attacker_margin) + " Door Margin: " + str(defender_margin)
     if attacker_margin > defender_margin:
+        print "The force destroys the " + door.security_type + "!"
         door.secured = False
     else:
-        print "The door remains fastly shut!\nNext attempt, subtract 1 from ST and lose 1 FP.\n"
+        print "You fail the check by " + str(defender_margin - attacker_margin) + " and the door remains fastly shut!\nNext attempt, subtract 1 from ST and lose 1 FP."
 
 def pick_lock(door):
     skill = input("Lockpicking skill? ")
-    margin = skill + door.lockpicking_modifier - roll_dice(3)
-    if margin > 0:
-        seconds = 60 - (margin * 5)
+    roll, critical = roll_dice(3)
+    if critical == "failure":
+        print "Uh oh. You seem to have jammed the lock closed."
+        door.locked = False
+        return
+    elif critical == "success":
+        print "You skillfully pick the lock in only 15 seconds!"
+        door.picked = True
+    elif skill + door.lockpicking_modifier - roll > 0:
+        seconds = 60 - ((skill + door.lockpicking_modifier - roll) * 5)
         if seconds < 10:
             seconds = 10
         print "You spend " + str(seconds) + " seconds picking the lock."
@@ -79,7 +102,7 @@ def pick_lock(door):
         print "You waste a full minute fumbling around with the lock."
 
 def do_action(door):
-    print "Door HP: " + str(door.hp) + " Door DR: " + str(door.dr)
+    print "\nDoor HP: " + str(door.hp) + " Door DR: " + str(door.dr)
     print "1 - Crushing Attack\n2 - Cutting Attack"
     if door.secured:
         print "3 - Force Door Open"
@@ -95,7 +118,7 @@ def do_action(door):
     elif door.locked and action == 4:
         pick_lock(door)
     else:
-        print action + " is an invalid input"
+        print str(action) + " is an invalid input"
 
 # Test String: Average,Wooden,2,True,29,12,0,Average,Bolt,6,9,10,1,Disc Combination, -1
 # Main loop
