@@ -36,8 +36,8 @@ class Door:
         self.hp = self.hp - damage
         if self.ablative and self.dr != 0:
             self.dr = self.dr - damage
-            if self.dr < 0:
-                self.dr = 0
+            if self.dr < 1:
+                self.dr = 1
 
     def update_state(self):
         if self.hp < 0:

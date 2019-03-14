@@ -99,14 +99,14 @@ def crush_attack(door):
     dice, modifier = get_damage()
     modifier = modifier + all_out_attack(dice) + forced_entry()
     roll, critical = roll_dice(dice)
-    damage = roll_dice(dice) + modifier - door.dr
+    damage = roll + modifier - door.dr
     if critical == "failure":
         print "Critical failure!\nThe result is up to the GM's imagination."
     if critical == "success":
         print "Critical success!\nConsult the Critical Hit Table.\nBase damage is " + str(damage) + "."
     else:
         door.do_damage(damage)
-        print "You deal " + str(damage) + " crushing damage to the door!" 
+        print "You deal " + str(damage) + " crushing damage to the " + door.material + "!"
 
 def cut_attack(door):
     dice, modifier = get_damage()
@@ -120,40 +120,43 @@ def cut_attack(door):
         print "Critical success!\nConsult the Critical Hit Table.\nBase damage is " + str(damage) + "."
     else:
         door.do_damage(damage)
-        print "You deal " + str(damage) + " cutting damage to the door!"
+        print "You deal " + str(damage) + " cutting damage to the " + door.material + "!"
 
 def force_door(door):
     attacker_margin = quick_contest(get_effective_strength() + forced_entry() - door.security_dr)
     defender_margin = quick_contest(door.security_hp)
-    print "Margin: " + str(attacker_margin) + " Door Margin: " + str(defender_margin)
     if attacker_margin > defender_margin:
         print "The force destroys the " + door.security_type + "!"
         door.secured = False
     else:
-        print "You fail the check by " + str(defender_margin - attacker_margin) + " and the door remains fastly shut!\nNext attempt, subtract 1 from ST and lose 1 FP."
+        print "You fail the check by " + str(defender_margin - attacker_margin) + " and the " + door.material + " remains fastly shut!\nNext attempt, subtract 1 from ST and lose 1 FP."
 
 def pick_lock(door):
     skill = input("Lockpicking skill? ")
     roll, critical = roll_dice(3)
     if critical == "failure":
-        print "Uh oh. You seem to have jammed the lock closed."
+        print "Uh oh. You seem to have jammed the " + door.lock_type + " closed."
         door.locked = False
         return
     elif critical == "success":
-        print "You skillfully pick the lock in only 15 seconds!"
+        print "You skillfully pick the " + door.lock_type + " in only 15 seconds!"
         door.picked = True
     elif skill + door.lockpicking_modifier - roll > 0:
         seconds = 60 - ((skill + door.lockpicking_modifier - roll) * 5)
         if seconds < 10:
             seconds = 10
-        print "You spend " + str(seconds) + " seconds picking the lock."
+        print "You spend " + str(seconds) + " seconds picking the " + door.lock_type + "."
         door.picked = True
     else:
-        print "You waste a full minute fumbling around with the lock."
+        print "You waste a full minute fumbling around with the " + door.lock_type + "."
 
 def do_action(door):
     while True:
-        print "\nDoor HP: " + str(door.hp) + " Door DR: " + str(door.dr)
+        print "\n" + door.level + " " + door.material + "\nHP: " + str(door.hp) + " DR: " + str(door.dr)
+        if door.secured:
+            print door.security_level + " " + door.security_type + "\nHP: " + str(door.security_hp) + " DR: " + str(door.security_dr)
+        if door.locked:
+            print door.lock_type + " (Modifier: " + str(door.lockpicking_modifier) + ")"
         print "1 - Crushing Attack\n2 - Cutting Attack"
         if door.secured:
             print "3 - Force Door Open"
@@ -190,8 +193,8 @@ while not door.broken and not door.forced and not door.picked:
     do_action(door)
     door.update_state()
 if door.broken:
-    print "The door breaks open!"
+    print "The " + door.material + " breaks open!"
 elif door.forced:
-    print "\nThe door is forced open!"
+    print "\nThe " + door.material + " is forced open!"
 else:
-    print "\nThe door swings open!"
+    print "\nThe " + door.material + " swings open!"
