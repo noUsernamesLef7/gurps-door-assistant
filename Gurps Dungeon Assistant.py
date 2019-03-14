@@ -99,12 +99,44 @@ def generate_lock(TL):
 	return lock, random.choice(locks[lock])
 	
 def get_user_parameters():
-	TL = input("What is the max Tech Level? ")
-	extreme_door = raw_input("Allow extreme doors? (True/False) ")
-	extreme_security = raw_input("Allow extreme security? (True/False) ")
-	allow_locks = raw_input("Allow locks? (True/False) ")
-	n = input("How many doors? ")
-	return TL, n, bool(extreme_door), bool(extreme_security), bool(allow_locks)
+    while True:
+        try:
+            TL = int(raw_input("What is the max Tech Level? "))
+        except ValueError:
+            print "TL must be a number!"
+            continue
+        if TL < 0:
+            print "TL cannot be negative!"
+            continue
+        else:
+            break
+    while True:
+        extreme_door = raw_input("Allow extreme doors? (True/False) ")
+        if extreme_door == "True" or extreme_door == "False":
+            break
+        print "Input must be 'True' or 'False'!"
+    while True:
+        extreme_security = raw_input("Allow extreme security? (True/False) ")
+        if extreme_security == "True" or extreme_security == "False":
+            break
+        print "Input must be 'True' or 'False'!"
+    while True:
+        allow_locks = raw_input("Allow locks? (True/False) ")
+        if allow_locks == "True" or allow_locks == "False":
+            break
+        print "Input must be 'True' or 'False'!"
+    while True:
+        try:
+            n = int(raw_input("How many doors? "))
+        except ValueError:
+            print "Input must be a number!"
+            continue
+        if n <= 0:
+            print "The number must be greater than 0!"
+            continue
+        else:
+            break
+    return TL, n, bool(extreme_door), bool(extreme_security), bool(allow_locks)
 	
 TL, n, extreme_door, extreme_security, allow_locks = get_user_parameters()
 for unused in range(0, n):
