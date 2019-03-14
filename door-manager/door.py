@@ -34,7 +34,7 @@ class Door:
 
     def do_damage(self, damage):
         self.hp = self.hp - damage
-        if self.ablative and self.dr != 0:
+        if self.ablative and self.dr > 1:
             self.dr = self.dr - damage
             if self.dr < 1:
                 self.dr = 1
