@@ -29,12 +29,12 @@ def all_out_attack(dice):
 def cut_attack(door):
     dice, modifier = get_damage()
     modifier = modifier + all_out_attack(dice) + skills.forced_entry_skill()
-    roll, critical = die_rolls.roll_dice(dice)
+    roll = die_rolls.roll_dice(dice)
     # Cutting attacks multiply damage by 1.5
     damage = int(round((roll + modifier - door.dr) * 1.5))
-    if critical == "failure":
+    if roll == 18:
         print "Critical failure!\nThe result is up to the GM's imagination."
-    elif critical == "success":
+    elif roll == 3 or roll == 4:
         print "Critical success!\nConsult the Critical Hit Table.\nBase damage is " + str(damage) + "."
     else:
         door.do_damage(damage)
@@ -45,9 +45,9 @@ def crush_attack(door):
     modifier = modifier + all_out_attack(dice) + skills.forced_entry_skill()
     roll, critical = die_rolls.roll_dice(dice)
     damage = roll + modifier - door.dr
-    if critical == "failure":
+    if roll == 18:
         print "Critical failure!\nThe result is up to the GM's imagination."
-    if critical == "success":
+    if roll == 3 or roll == 4:
         print "Critical success!\nConsult the Critical Hit Table.\nBase damage is " + str(damage) + "."
     else:
         door.do_damage(damage)

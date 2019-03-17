@@ -12,12 +12,12 @@ def force_door(door):
 
 def pick_lock(door):
     skill = skills.lockpicking_skill()
-    roll, critical = die_rolls.roll_dice(3)
-    if critical == "failure":
+    roll = die_rolls.roll_dice(3)
+    if roll == 18:
         print "Uh oh. You seem to have jammed the " + door.lock_type + " closed."
         door.locked = False
         return
-    elif critical == "success":
+    elif roll == 3 or roll == 4:
         print "You skillfully pick the " + door.lock_type + " in only 15 seconds!"
         door.picked = True
     elif skill + door.lockpicking_modifier - roll > 0:

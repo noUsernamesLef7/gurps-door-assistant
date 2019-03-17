@@ -5,11 +5,7 @@ def roll_dice(dice):
     critical = ""
     for unused in range(0, dice):
         sum = sum + random.randint(1,6)
-    if sum == 18:
-        critical = "failure"
-    elif sum == 3 or sum == 4:
-        critical = "success"
-    return sum, critical
+    return sum
 
 def quick_contest(target):
     roll, critical = roll_dice(3)
