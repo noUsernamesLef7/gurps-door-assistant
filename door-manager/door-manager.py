@@ -31,7 +31,7 @@ def do_action(door):
         except ValueError:
             print "You must enter a number!"
             continue
-        if action > 4:
+        if action > 4 or action < 1:
             print "Not a valid option!"
         elif action == 3 and not door.secured:
             print "Not a valid option!"

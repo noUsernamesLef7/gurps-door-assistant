@@ -1,33 +1,25 @@
 import skills
 import die_rolls
+import validation
 
 def get_damage():
     while True:
-        try:
-            dice = int(raw_input("How many dice of damage? "))
-        except ValueError:
-            print "Input must be a number!"
-            continue
-        if dice > 0:
+        dice = raw_input("How many dice of damage? ")
+        if validation.is_valid_number(dice, False, False):
             break
-        print "The number must be at least 1!"
     while True:
-        try:
-            modifier = int(raw_input("What is the damage modifier? "))
-        except ValueError:
-            print "Input must be a number!"
-        else:
+        modifier = raw_input("What is the damage modifier? ")
+        if validation.is_valid_number(modifier, True, True):
             break
-    return dice, modifier
+    return int(dice), int(modifier)
 
 def all_out_attack(dice):
     all_out = ""
     while True:
-        all_out = raw_input("Is this an all-out-attack? ")
-        if all_out == "yes" or all_out == "no":
+        all_out = raw_input("Is this an all-out-attack? (True/False) ")
+        if validation.is_valid_boolean(all_out):
             break
-        print "Response must be 'yes' or 'no'."
-    if all_out == "yes":
+    if bool(all_out):
         if dice > 2:
             return dice
         else:

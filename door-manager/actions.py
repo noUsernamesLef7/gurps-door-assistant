@@ -6,7 +6,7 @@ def force_door(door):
     defender_margin = die_rolls.quick_contest(door.security_hp)
     if attacker_margin > defender_margin:
         print "The force destroys the " + door.security_type + "!"
-        door.secured = False
+        door.forced = True
     else:
         print "You fail the check by " + str(defender_margin - attacker_margin) + " and the " + door.material + " remains fastly shut!\nNext attempt, subtract 1 from ST and lose 1 FP."
 
