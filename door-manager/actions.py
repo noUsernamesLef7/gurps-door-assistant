@@ -1,6 +1,7 @@
 import die_rolls
 import skills
 
+# Takes a door object and allows the player to attempt to force their way through by breaking the security mechanism.
 def force_door(door):
     attacker_margin = die_rolls.quick_contest(skills.get_effective_strength() + skills.forced_entry_skill() - door.security_dr)
     defender_margin = die_rolls.quick_contest(door.security_hp)
@@ -10,6 +11,7 @@ def force_door(door):
     else:
         print "You fail the check by " + str(defender_margin - attacker_margin) + " and the " + door.material + " remains fastly shut!\nNext attempt, subtract 1 from ST and lose 1 FP."
 
+# Takes a door object and allows the player to attempt to pick the lock.
 def pick_lock(door):
     skill = skills.lockpicking_skill()
     roll = die_rolls.roll_dice(3)

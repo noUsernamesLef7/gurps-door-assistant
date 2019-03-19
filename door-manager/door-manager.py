@@ -14,6 +14,7 @@ def import_door():
     new_door = door.Door(door_stats)
     return new_door
 
+# Takes a door object. Prompts the user to pick an action and then calls the specified function.
 def do_action(door):
     while True:
         print "\n" + door.level + " " + door.material + "\nHP: " + str(door.hp) + " DR: " + str(door.dr)
@@ -50,7 +51,6 @@ def do_action(door):
     elif action == 4:
         actions.pick_lock(door)
 
-# Test String: Average,Wooden,2,True,29,12,0,Average,Bolt,6,9,10,1,Disc Combination, -1
 # Main loop
 door = import_door()
 while not door.broken and not door.forced and not door.picked:

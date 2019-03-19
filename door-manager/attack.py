@@ -2,6 +2,7 @@ import skills
 import die_rolls
 import validation
 
+# Asks the user how many dice of damage the attack deals and if there are any modifiers, then returns those values.
 def get_damage():
     while True:
         dice = raw_input("How many dice of damage? ")
@@ -13,6 +14,7 @@ def get_damage():
             break
     return int(dice), int(modifier)
 
+# Asks the user if the attack is an all-out-attack, then returns the associated damage bonus.
 def all_out_attack(dice):
     all_out = ""
     while True:
@@ -26,6 +28,7 @@ def all_out_attack(dice):
             return 2
     return 0
 
+# Takes a door object and rolls a cutting attack against it.
 def cut_attack(door):
     dice, modifier = get_damage()
     modifier = modifier + all_out_attack(dice) + skills.forced_entry_skill()
@@ -40,6 +43,7 @@ def cut_attack(door):
         door.do_damage(damage)
         print "You deal " + str(damage) + " cutting damage to the " + door.material + "!"
 
+# Takes a door object and rolls a crushing attack against it.
 def crush_attack(door):
     dice, modifier = get_damage()
     modifier = modifier + all_out_attack(dice) + skills.forced_entry_skill()

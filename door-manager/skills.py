@@ -1,5 +1,6 @@
 import validation
 
+# Gets the players forced entry skill bonus and returns the associated damage bonus.
 def forced_entry_skill():
     while True:
         forced = raw_input("Is Forced Entry skill at DX+1 or DX+2? Enter 0, 1, or 2: ")
@@ -9,6 +10,7 @@ def forced_entry_skill():
         print "You must enter a number between 0 and 2!"
     return int(forced)
 
+# Gets the players lockpicking skill and returns it.
 def lockpicking_skill():
     while True:
         lockpicking = raw_input("Enter lockpicking skill level: ")
@@ -16,7 +18,8 @@ def lockpicking_skill():
             break
     return int(lockpicking)
 
-# ST is not really a skill, but it fits here code-wise
+# Gets the players strength and modifiers and returns the sum.
+# ST is not really a skill, but it fits here code-wise.
 def get_effective_strength():
     while True:
         st = raw_input("Enter ST: ")
